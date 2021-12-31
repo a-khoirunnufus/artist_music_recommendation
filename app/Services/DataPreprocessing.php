@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Artist;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 
@@ -54,6 +55,13 @@ class DataPreprocessing {
                 'key' => 'tags',
                 'value' => $all_tags
             ], ['upsert' => true]);
+
+        DB::collection('documents_info')
+            ->where('key', 'artists_count')
+            ->update([
+                'key' => 'artists_count',
+                'value' => count($artists)
+            ], ['upsert' => true]);
     }
 
     public function createTermFrequencyMatrix() {
@@ -87,6 +95,37 @@ class DataPreprocessing {
                     'properties' => $properties,
                 ]);
         }
+    }
+
+    public function initUserProfile() {
+        $artists_id = DB::collection('artists')
+            ->select('_id')
+            ->get();
+
+        $preferences = [];
+        foreach ($artists_id as $id) {
+            array_push($preferences, [
+                strval($id['_id']) => 0,
+            ]);
+        }
+
+        $all_tags = DB::collection('documents_info')
+            ->select('value')
+            ->where('key', 'tags')
+            ->first();
+        $all_tags = $all_tags['value'];
+        $user_profile = [];
+        foreach ($all_tags as $tag) {
+            array_push($user_profile, [
+                $tag => 0
+            ]);
+        }
+
+        $user = new User;
+        $user->name = "Budi";
+        $user->preference = $preferences;
+        $user->user_profile = $user_profile;
+        $user->save();
     }
 
     // UTILITY FUNCTION
