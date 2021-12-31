@@ -67,20 +67,22 @@ class DataPreprocessing {
                 ->first();
             $all_tags = $all_tags['value'];
 
-            $artist = Artist::find($id)->first();
+            $artist = Artist::find($id['_id']);
             $artist_tags = $artist->tags;
             $properties = [];
+
+            $normalize_value = 1/sqrt(count($artist_tags));
 
             foreach ($all_tags as $tag) {
                 array_push($properties, [
                     'tag' => $tag,
-                    'value' => (in_array($tag, $artist_tags)) ? 1 : 0,
+                    'value' => (in_array($tag, $artist_tags)) ? $normalize_value : 0,
                 ]);
             }
 
             DB::collection('artists_tf_matrix')
                 ->insert([
-                    'artist_id' => $id,
+                    'artist_id' => $id['_id'],
                     'artist_name' => $artist->name,
                     'properties' => $properties,
                 ]);
