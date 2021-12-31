@@ -16,6 +16,7 @@ class DataPreprocessing {
             $artist = Artist::find($id['_id']);
             $tags = $this->getArrayFromString($artist->tags);
             $artist->tags = $tags;
+            $artist->tags_count = count($tags);
             if($artist->country != null) {
                 $countries = $this->getArrayFromString($artist->country);
                 $artist->country = $countries;
