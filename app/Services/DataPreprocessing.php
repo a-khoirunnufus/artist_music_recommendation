@@ -102,10 +102,11 @@ class DataPreprocessing {
             ->select('_id')
             ->get();
 
-        $preferences = [];
+        $preference = [];
         foreach ($artists_id as $id) {
-            array_push($preferences, [
-                strval($id['_id']) => 0,
+            array_push($preference, [
+                'artist_id' => $id['_id'],
+                'rating' => 0
             ]);
         }
 
@@ -117,15 +118,63 @@ class DataPreprocessing {
         $user_profile = [];
         foreach ($all_tags as $tag) {
             array_push($user_profile, [
-                $tag => 0
+                'tag' => $tag,
+                'value' => 0
+            ]);
+        }
+
+        $prediction = [];
+        foreach ($artists_id as $id) {
+            array_push($prediction, [
+                'artist_id' => $id['_id'],
+                'probability' => 0
             ]);
         }
 
         $user = new User;
         $user->name = "Budi";
-        $user->preference = $preferences;
+        $user->preference = $preference;
         $user->user_profile = $user_profile;
+        $user->prediction = $prediction;
         $user->save();
+    }
+
+    public function createTagsIDFMatrix()
+    {
+        $all_tags = DB::collection('documents_info')
+            ->select('value')
+            ->where('key', 'tags')
+            ->first();
+        $all_tags = $all_tags['value'];
+
+        $artists_count = DB::collection('documents_info')
+            ->select('value')
+            ->where('key', 'artists_count')
+            ->first();
+        $artists_count = $artists_count['value'];
+
+        $artists_id = DB::collection('artists')
+            ->select('_id')
+            ->get();
+
+        $index = 0;
+        foreach ($all_tags as $tag) {
+            $df = 0;
+            foreach ($artists_id as $id) {
+                $artist = Artist::find($id['_id']);
+                if (in_array($tag, $artist->tags)) {
+                    $df += 1;
+                }
+            }
+            DB::collection('tags_idf_matrix')
+                ->insert([
+                    'index' => $index,
+                    'tag' => $tag,
+                    'df' => $df,
+                    'idf' => log10($artists_count/$df)
+                ]);
+            $index += 1;
+        }
     }
 
     // UTILITY FUNCTION

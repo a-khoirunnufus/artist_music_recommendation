@@ -13,8 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [\App\Http\Controllers\RecommenderController::class, 'index']);
 
-Route::get('/artist', [\App\Http\Controllers\ArtistController::class, 'index']);
+Route::get('/choose', function() {
+    return view('choose');
+});
+Route::get('/result', function() {
+    return view('result');
+});
