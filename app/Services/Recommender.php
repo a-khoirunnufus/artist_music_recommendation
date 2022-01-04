@@ -16,6 +16,12 @@ class Recommender
         $this->user = $user;
     }
 
+    public function getRandomArtist()
+    {
+        $artist = Artist::all()->random();
+        return $artist;
+    }
+
     public function likeArtist($artist_id)
     {
         $user_preferences = $this->user->preference;
@@ -28,6 +34,18 @@ class Recommender
         $this->user->save();
     }
 
+    public function getNumOfLikes()
+    {
+        $user_preferences = $this->user->preference;
+        $count = 0;
+        foreach ($user_preferences as $index => $preference) {
+            if ($preference['rating'] == 1) {
+                $count ++;
+            }
+        }
+        return $count;
+    }
+
     public function unlikeArtist($artist_id)
     {
         $user_preferences = $this->user->preference;
@@ -37,6 +55,36 @@ class Recommender
             }
         }
         $this->user->preference = $user_preferences;
+        $this->user->save();
+    }
+
+    public function getNumOfUnlikes()
+    {
+        $user_preferences = $this->user->preference;
+        $count = 0;
+        foreach ($user_preferences as $index => $preference) {
+            if ($preference['rating'] == -1) {
+                $count ++;
+            }
+        }
+        return $count;
+    }
+
+    public function resetPreferences()
+    {
+        $artists_id = DB::collection('artists')
+            ->select('_id')
+            ->get();
+
+        $preference = [];
+        foreach ($artists_id as $id) {
+            array_push($preference, [
+                'artist_id' => $id['_id'],
+                'rating' => 0
+            ]);
+        }
+
+        $this->user->preference = $preference;
         $this->user->save();
     }
 

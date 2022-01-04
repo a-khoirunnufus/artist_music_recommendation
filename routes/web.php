@@ -17,6 +17,7 @@ Route::get('/', [\App\Http\Controllers\RecommenderController::class, 'index']);
 Route::get('/pre-recommendation', [\App\Http\Controllers\RecommenderController::class, 'preRecommendation']);
 Route::post('/engagement', [\App\Http\Controllers\RecommenderController::class, 'engagement']);
 Route::get('/recommendation', [\App\Http\Controllers\RecommenderController::class, 'getRecommendation']);
+Route::get('/reset-preferences', [\App\Http\Controllers\RecommenderController::class, 'resetPreferences']);
 
 Route::get('/choose', function() {
     return view('choose');

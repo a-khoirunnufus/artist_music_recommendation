@@ -11,27 +11,19 @@ class RecommenderController extends Controller
     public function preRecommendation()
     {
         new PreRecommendation();
+
+        return "success";
     }
 
     public function index(Request $request)
     {
-        // init session for first time
-        $select_count = $request->session()->get('select_count');
-        if (!boolval($select_count)) {
-            $request->session()->put('select_count', '0');
-        }
+        // get num of like+unlike
+        $recommender = new Recommender();
+        $numOfLikeUnlike = $recommender->getNumOfLikes() + $recommender->getNumOfUnlikes();
 
-        // if count <= 5 then
-        // generate random artist
-        if ($select_count <= 5) {
-            return view('choose');
-        }
+        $artist = $recommender->getRandomArtist();
 
-        // else
-        // show recommendation result
-        else {
-            return view('result');
-        }
+        return view('choose', ['artist' => $artist]);
     }
 
     public function engagement(Request $request)
@@ -46,6 +38,13 @@ class RecommenderController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function resetPreferences()
+    {
+        (new Recommender)->resetPreferences();
+
+        return redirect('/');
     }
 
     public function getRecommendation(Request $request)
