@@ -6,7 +6,16 @@ use App\Models\Artist;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
-class DataPreprocessing {
+class PreRecommendation {
+    public function __construct()
+    {
+        $this->mappingTagsNCountries();
+        $this->updateDocumentsInfo();
+        $this->createTermFrequencyMatrix();
+        $this->initUserProfile();
+        $this->createTagsIDFMatrix();
+    }
+
     public function mappingTagsNCountries()
     {
         $artists_id = DB::collection('artists')
