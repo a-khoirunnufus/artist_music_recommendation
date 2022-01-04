@@ -50,8 +50,10 @@ class RecommenderController extends Controller
     public function getRecommendation(Request $request)
     {
         $recommendation_list = (new Recommender)->recommend();
-        dd($recommendation_list);
-        return 'recommendation list';
+
+        return view('result', [
+            'recommendations' => $recommendation_list
+        ]);
     }
 
 }

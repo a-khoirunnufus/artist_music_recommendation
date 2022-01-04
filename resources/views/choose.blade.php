@@ -37,7 +37,8 @@
             transform: translate(-50%, -50%);
         }
         .artist-container {
-            /*background-image: url("https://source.unsplash.com/600x300/?music");*/
+            background-image: url("{{ asset('img/person.png') }}");
+            background-position: center;
             object-fit: cover;
             display: flex;
             flex-direction: column;
@@ -117,10 +118,7 @@
   <body>
     <div class="custom-container">
         <h2 class="fw-bolder text-center mb-5">Do you like to listen to this artist?</h2>
-        <div
-            class="artist-container mb-5"
-            style="background-image: url('https://source.unsplash.com/600x300/?{{ urlencode($artist->tags[0]) }}');"
-        >
+        <div class="artist-container mb-5">
 {{--            <img src="{{ asset('img/person.png') }}" alt="...">--}}
             <h1>{{ $artist->name }}</h1>
             <h6 class="artist-profile-link mt-3">
@@ -136,12 +134,15 @@
         </form>
         <div class="btn-group" role="group">
             <a class="btn-engagement btn btn-danger btn-lg text-white" data-type="unlike">No, I don't</a>
+            <a class="btn-engagement btn btn-secondary btn-lg text-white" data-type="skip">Skip this</a>
             <a class="btn-engagement btn btn-success btn-lg text-white" data-type="like">Yes, I do</a>
         </div>
-        @if($recommender->getNumOfLikes() + $recommender->getNumOfUnlikes() >= 10)
+        @if($recommender->getNumOfLikes() + $recommender->getNumOfUnlikes() >= 5)
             <hr class="my-5" />
             <h5 class="mt-3 text-center">You can get the recommendation now</h5>
-            <button class="btn btn-primary btn-lg mt-3" style="width: 100%">Get Recommendation</button>
+            <button
+                onclick="window.location.href='/recommendation'"
+                class="btn btn-primary btn-lg mt-3" style="width: 100%">Get Recommendation</button>
         @endif
     </div>
 
@@ -152,8 +153,14 @@
             <h5 class="text-white mb-5">#LikedArtist</h5>
             <h1 class="text-white"><i class="bi bi-hand-thumbs-down-fill"></i> {{ $recommender->getNumOfUnlikes() }}</h1>
             <h5 class="text-white mb-5">#UnlikedArtist</h5>
-            <button id="btn-get-recommendation" class="btn btn-white btn-lg mb-3" style="display: inline-block">Get Recommendation</button>
-            <button id="btn-reset-preferences" class="btn btn-white btn-lg" style="display: inline-block">Reset Preferences</button>
+            <button
+                onclick="window.location.href='/recommendation'"
+                class="btn btn-white btn-lg mb-3"
+                style="display: inline-block">Get Recommendation</button>
+            <button
+                onclick="window.location.href='/reset-preferences'"
+                class="btn btn-white btn-lg"
+                style="display: inline-block">Reset Preferences</button>
         </div>
     </div>
 
@@ -185,14 +192,6 @@
               const engagementType = $(this).attr('data-type');
               $("#engagement-form > input[name='engagement_type']").val(engagementType);
               $("#engagement-form").submit();
-          });
-
-          $('#btn-reset-preferences').click(function (){
-              window.location.href = "/reset-preferences";
-          });
-
-          $('#btn-get-recommendation').click(function (){
-              window.location.href = "/recommendation";
           });
       });
   </script>

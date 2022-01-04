@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 class Recommender
 {
     protected $user;
+    protected $threshold = 0.3;
 
     public function __construct()
     {
@@ -93,7 +94,7 @@ class Recommender
         $this->generateUserProfile();
         $this->generateRecommendation();
 
-        return $this->getRecommendationList();
+        return $this->getRecommendationList($this->threshold);
     }
 
     public function generateUserProfile()
@@ -200,7 +201,7 @@ class Recommender
                 $artist = Artist::find($prediction['artist_id']);
                 array_push($recommendations, [
                     'artist' => $artist,
-                    'probability' => $prediction['probability']
+                    'probability' => $this->getPercentage(1, $prediction['probability'])
                 ]);
             }
         }
@@ -233,6 +234,16 @@ class Recommender
         for ($i = 0; $i < $n; $i++)
             $product = $product + $vect_A[$i] * $vect_B[$i] * $vect_C[$i];
         return $product;
+    }
+
+    private function getPercentage($total, $number)
+    {
+        if ( $total > 0 ) {
+            $number = $number > $total ? $total : $number;
+            return round(($number * 100) / $total, 2);
+        } else {
+            return 0;
+        }
     }
 
 }
