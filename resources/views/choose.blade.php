@@ -48,7 +48,7 @@
             border-radius: 10px;
         }
         .artist-container h1 {
-            margin-top: -3rem;
+            margin-top: -2rem;
             background-color: #6f42c1;
             padding: 0.5rem 1rem;
             border-radius: 10px;
@@ -106,10 +106,10 @@
   </head>
   <body>
     <div class="custom-container">
-        <h2 class="fw-bolder text-center">Do you like to listen to this artist?</h2>
-        <div class="artist-container">
+        <h2 class="fw-bolder text-center mb-5">Do you like to listen to this artist?</h2>
+        <div class="artist-container mb-3">
             <img src="{{ asset('img/kanye.png') }}" alt="...">
-            <h1 class="card-title">Kanye West</h1>
+            <h1>Kanye West</h1>
         </div>
         <div class="btn-group" role="group">
             <a href="#" class="btn btn-danger btn-lg">No, I don't</a>
