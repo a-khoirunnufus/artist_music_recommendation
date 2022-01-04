@@ -51,6 +51,11 @@ class Recommender
 
         $user_profile = $this->user->user_profile;
 
+        $artists_count = DB::collection('documents_info')
+                        ->select('value')
+                        ->where('key', 'artists_count')
+                        ->first();
+
         foreach ($user_profile as $index => $tag) {
             // generate tag vector per loop
             $tag_vector = [];
@@ -62,7 +67,12 @@ class Recommender
                 array_push($tag_vector, $tf_value);
             }
 
-            $dot_product = $this->dotProduct($tag_vector, $user_preference_vector);
+            $dot_product = $this->dotProduct($tag_vector, $user_preference_vector, $artists_count['value']);
+
+//            if ($index == 72) {
+//                dd($tag, $tag_vector, $user_preference_vector, $dot_product);
+//            }
+//            echo $index . " " . $tag['tag'] . " dot: " . $dot_product . "<br>";
             $user_profile[$index]['value'] = $dot_product;
         }
 
@@ -85,7 +95,6 @@ class Recommender
             }
             array_push($artists_vectors, $artist_tf_vector);
         }
-        // dd($artists_vectors);
 
         // generate idf vector
         $idf_vector = [];
@@ -95,7 +104,6 @@ class Recommender
         foreach ($tags as $tag) {
             array_push($idf_vector, $tag['idf']);
         }
-        // dd($idf_vector);
 
         // generate user profile vector
         $user_profile_vector = [];
@@ -106,18 +114,47 @@ class Recommender
         foreach ($tags as $tag) {
             array_push($user_profile_vector, $tag['value']);
         }
-        dd($user_profile_vector);
+
+        $artists_count = DB::collection('documents_info')
+                            ->select('value')
+                            ->where('key', 'tags_count')
+                            ->first()['value'];
+
+//        dd($artists_vectors, $idf_vector, $user_profile_vector);
+
+        $predictions = $this->user->prediction;
+        foreach ($predictions as $idx => $prediction) {
+            $probability = $this->dotProduct3Vec(
+                                        $artists_vectors[$idx],
+                                        $idf_vector,
+                                        $user_profile_vector,
+                                        $artists_count
+                                    );
+            $predictions[$idx]['probability'] = $probability;
+        }
+        $this->user->prediction = $predictions;
+        $this->user->save();
     }
 
     // UTILITY FUNCTION
 
-    function dotProduct($vect_A, $vect_B)
+    private function dotProduct($vect_A, $vect_B, $vector_length)
     {
-        $n = 3;
+        $n = $vector_length;
         $product = 0;
 
         for ($i = 0; $i < $n; $i++)
             $product = $product + $vect_A[$i] * $vect_B[$i];
+        return $product;
+    }
+
+    private function dotProduct3Vec($vect_A, $vect_B, $vect_C, $vector_length)
+    {
+        $n = $vector_length;
+        $product = 0;
+
+        for ($i = 0; $i < $n; $i++)
+            $product = $product + $vect_A[$i] * $vect_B[$i] * $vect_C[$i];
         return $product;
     }
 

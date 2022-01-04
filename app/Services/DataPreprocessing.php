@@ -6,7 +6,6 @@ use App\Models\Artist;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
-
 class DataPreprocessing {
     public function mappingTagsNCountries()
     {
@@ -38,9 +37,6 @@ class DataPreprocessing {
                 }
             }
         }
-
-        // TODO:
-        // 1. add updated_at property
 
         DB::collection('documents_info')
             ->where('key', 'tags_count')

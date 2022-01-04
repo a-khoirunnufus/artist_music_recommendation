@@ -10,34 +10,39 @@ class RecommenderController extends Controller
 {
     public function preprocessing()
     {
-        // (new DataPreprocessing)->mappingTagsNCountries();
-        // (new DataPreprocessing)->updateDocumentsInfo();
-        // (new DataPreprocessing)->createTermFrequencyMatrix();
-        // (new DataPreprocessing)->initUserProfile();
-        // (new DataPreprocessing)->createTagsIDFMatrix();
+         (new DataPreprocessing)->mappingTagsNCountries();
+         (new DataPreprocessing)->updateDocumentsInfo();
+         (new DataPreprocessing)->createTermFrequencyMatrix();
+         (new DataPreprocessing)->initUserProfile();
+         (new DataPreprocessing)->createTagsIDFMatrix();
     }
 
     public function index(Request $request)
     {
         $recommender = new Recommender;
+
+//        $recommender->likeArtist('61d3cc8fa2ecc0a7181e9ecb');
+//        $recommender->unlikeArtist('61d3cc8fa2ecc0a7181e9ec3');
+//        $recommender->generateUserProfile();
+
         $recommender->generateRecommendation();
 
         // init session for first time
-        $select_count = $request->session()->get('select_count');
-        if (!boolval($select_count)) {
-            $request->session()->put('select_count', '0');
-        }
-
-        // if count <= 5 then
-        // generate random artist
-        if ($select_count <= 5) {
-            return view('choose');
-        }
-
-        // else
-        // show recommendation result
-        else {
-            return view('result');
-        }
+//        $select_count = $request->session()->get('select_count');
+//        if (!boolval($select_count)) {
+//            $request->session()->put('select_count', '0');
+//        }
+//
+//        // if count <= 5 then
+//        // generate random artist
+//        if ($select_count <= 5) {
+//            return view('choose');
+//        }
+//
+//        // else
+//        // show recommendation result
+//        else {
+//            return view('result');
+//        }
     }
 }
