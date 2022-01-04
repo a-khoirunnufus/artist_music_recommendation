@@ -120,7 +120,7 @@
         <h2 class="fw-bolder text-center mb-5">Do you like to listen to this artist?</h2>
         <div class="artist-container mb-5">
 {{--            <img src="{{ asset('img/person.png') }}" alt="...">--}}
-            <h1>{{ $artist->name }}</h1>
+            <h1 class="text-center">{{ $artist->name }}</h1>
             <h6 class="artist-profile-link mt-3">
                 <a id="artist-profile-url" href="" target="_blank" class="text-decoration-underline">
                     <i class="bi bi-box-arrow-up-right"></i> Open Artist Profile
@@ -141,7 +141,10 @@
             <hr class="my-5" />
             <h5 class="mt-3 text-center">You can get the recommendation now</h5>
             <button
-                onclick="window.location.href='/recommendation'"
+                onclick="
+                    alert('Please wait, it will take about 1 minute.');
+                    window.location.href = '/recommendation';
+                "
                 class="btn btn-primary btn-lg mt-3" style="width: 100%">Get Recommendation</button>
         @endif
     </div>
@@ -154,7 +157,10 @@
             <h1 class="text-white"><i class="bi bi-hand-thumbs-down-fill"></i> {{ $recommender->getNumOfUnlikes() }}</h1>
             <h5 class="text-white mb-5">#UnlikedArtist</h5>
             <button
-                onclick="window.location.href='/recommendation'"
+                onclick="
+                    alert('Please wait, it will take about 1 minute.');
+                    window.location.href = '/recommendation';
+                "
                 class="btn btn-white btn-lg mb-3"
                 style="display: inline-block">Get Recommendation</button>
             <button

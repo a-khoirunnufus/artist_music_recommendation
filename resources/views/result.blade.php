@@ -161,7 +161,7 @@
                 <div class="list-item">
                     <h3 class="list-item-number">#{{ $idx+1 }}</h3>
                     <img src="{{ asset('img/person.png') }}" alt="...">
-                    <h3 class="list-item-name">{{ $recommendation['artist']['name'] }}</h3>
+                    <h3 class="list-item-name text-center">{{ $recommendation['artist']['name'] }}</h3>
 
                     <h6 class="artist-profile-link" style="margin: .75rem">
                         <a href="https://www.last.fm/music/{{ str_replace(' ', '+', $recommendation['artist']['name']) }}" target="_blank" class="text-decoration-underline">
@@ -187,7 +187,10 @@
             <h1 class="text-white"><i class="bi bi-hand-thumbs-down-fill"></i> {{ $recommender->getNumOfUnlikes() }}</h1>
             <h5 class="text-white mb-5">#UnlikedArtist</h5>
             <button
-                onclick="window.location.href='/recommendation'"
+                onclick="
+                    alert('Please wait, it will take about 1 minute.');
+                    window.location.href = '/recommendation';
+                "
                 class="btn btn-white btn-lg mb-3"
                 style="display: inline-block">Get Recommendation</button>
             <button
