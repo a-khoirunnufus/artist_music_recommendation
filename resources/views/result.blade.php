@@ -1,3 +1,5 @@
+@inject('recommender', 'App\Services\Recommender')
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -113,7 +115,6 @@
           }
           .recommendation-list .list-item {
               border: 1px solid grey;
-              height: 300px;
               display: flex;
               flex-direction: column;
               align-items: center;
@@ -156,116 +157,45 @@
         <h2>Recommendation List</h2>
         <p class="mb-5">Here the list of artist we recommend for you.</p>
         <div class="recommendation-list">
-            <div class="list-item">
-                <h3 class="list-item-number">#1</h3>
-                <img src="{{ asset('img/kanye.png') }}" alt="...">
-                <h3 class="list-item-name">Kanye West</h3>
-                <h5>Probability: 70%</h5>
-                <p class="mb-1">Country: United States</p>
-                <p class="mb-2">Num of Listeners: 135765</p>
-            </div>
-            <div class="list-item">
-                <h3 class="list-item-number">#1</h3>
-                <img src="{{ asset('img/kanye.png') }}" alt="...">
-                <h3 class="list-item-name">Kanye West</h3>
-                <h5>Probability: 70%</h5>
-                <p class="mb-1">Country: United States</p>
-                <p class="mb-2">Num of Listeners: 135765</p>
-            </div>
-            <div class="list-item">
-                <h3 class="list-item-number">#1</h3>
-                <img src="{{ asset('img/kanye.png') }}" alt="...">
-                <h3 class="list-item-name">Kanye West</h3>
-                <h5>Probability: 70%</h5>
-                <p class="mb-1">Country: United States</p>
-                <p class="mb-2">Num of Listeners: 135765</p>
-            </div>
-            <div class="list-item">
-                <h3 class="list-item-number">#1</h3>
-                <img src="{{ asset('img/kanye.png') }}" alt="...">
-                <h3 class="list-item-name">Kanye West</h3>
-                <h5>Probability: 70%</h5>
-                <p class="mb-1">Country: United States</p>
-                <p class="mb-2">Num of Listeners: 135765</p>
-            </div>
-            <div class="list-item">
-                <h3 class="list-item-number">#1</h3>
-                <img src="{{ asset('img/kanye.png') }}" alt="...">
-                <h3 class="list-item-name">Kanye West</h3>
-                <h5>Probability: 70%</h5>
-                <p class="mb-1">Country: United States</p>
-                <p class="mb-2">Num of Listeners: 135765</p>
-            </div>
-            <div class="list-item">
-                <h3 class="list-item-number">#1</h3>
-                <img src="{{ asset('img/kanye.png') }}" alt="...">
-                <h3 class="list-item-name">Kanye West</h3>
-                <h5>Probability: 70%</h5>
-                <p class="mb-1">Country: United States</p>
-                <p class="mb-2">Num of Listeners: 135765</p>
-            </div>
-            <div class="list-item">
-                <h3 class="list-item-number">#1</h3>
-                <img src="{{ asset('img/kanye.png') }}" alt="...">
-                <h3 class="list-item-name">Kanye West</h3>
-                <h5>Probability: 70%</h5>
-                <p class="mb-1">Country: United States</p>
-                <p class="mb-2">Num of Listeners: 135765</p>
-            </div>
+            @foreach($recommendations as $idx => $recommendation)
+                <div class="list-item">
+                    <h3 class="list-item-number">#{{ $idx+1 }}</h3>
+                    <img src="{{ asset('img/person.png') }}" alt="...">
+                    <h3 class="list-item-name">{{ $recommendation['artist']['name'] }}</h3>
 
+                    <h6 class="artist-profile-link" style="margin: .75rem">
+                        <a href="https://www.last.fm/music/{{ str_replace(' ', '+', $recommendation['artist']['name']) }}" target="_blank" class="text-decoration-underline">
+                            <i class="bi bi-box-arrow-up-right"></i> Listen Artist Music
+                        </a>
+                    </h6>
+
+                    <h5>Probability: {{ $recommendation['probability'] }}%</h5>
+                    <p class="mb-1">
+                        Country: {{ implode(", ",$recommendation['artist']['country']) }}
+                    </p>
+                    <p class="mb-4">Num of Listeners: {{ $recommendation['artist']['listeners'] }}</p>
+                </div>
+            @endforeach
         </div>
     </div>
 
     <div class="side-container">
         <button id="side-toggle-btn"><i class="bi bi-list"></i></button>
         <div class="side-menu-container">
-            <h1 class="text-white"><i class="bi bi-hand-thumbs-up-fill"></i> 7</h1>
+            <h1 class="text-white"><i class="bi bi-hand-thumbs-up-fill"></i> {{ $recommender->getNumOfLikes() }}</h1>
             <h5 class="text-white mb-5">#LikedArtist</h5>
-            <h1 class="text-white"><i class="bi bi-hand-thumbs-down-fill"></i> 5</h1>
+            <h1 class="text-white"><i class="bi bi-hand-thumbs-down-fill"></i> {{ $recommender->getNumOfUnlikes() }}</h1>
             <h5 class="text-white mb-5">#UnlikedArtist</h5>
-            <button class="btn btn-white btn-lg mb-3" style="display: inline-block">Get Recommendation</button>
-            <button class="btn btn-white btn-lg" style="display: inline-block">Reset Profile</button>
+            <button
+                onclick="window.location.href='/recommendation'"
+                class="btn btn-white btn-lg mb-3"
+                style="display: inline-block">Get Recommendation</button>
+            <button
+                onclick="window.location.href='/reset-preferences'"
+                class="btn btn-white btn-lg"
+                style="display: inline-block">Reset Preferences</button>
         </div>
     </div>
-    <!--
-        <div class="container">
-      <div class="card">
-        <div class="card-header">
-          <div class="d-flex justify-content-center">Recommendation System</div>
-        </div>
-        <div class="card-body">
-          <div class="d-flex justify-content-center">
-            <h3 class="card-title" style="padding: 15px">We are [...]% sure that you might want to listen to this artist:</h3>
-          </div>
-          <div class="d-flex justify-content-center">
-            <img src="{{ asset('img/kanye.png') }}" class="img-fluid" alt="...">
-          </div>
-          <div class="d-flex justify-content-center" style="padding: 30px">
-            <h2 class="card-title">#1 Coldplay 🎉🎉🎉</h2>
-          </div>
-        </div>
-        <div class="card-body">
-            <div class="d-flex justify-content-center">
-              <h3 class="card-title" style="padding: 15px">Other artists that you might like, too: </h3>
-            </div>
-            <div class="d-flex justify-content-center">
-              <img src="{{ asset('img/kanye.png') }}" class="img-fluid" alt="...">
-            </div>
-            <div class="d-flex justify-content-center" style="padding: 30px">
-              <h2 class="card-title">#2 West life 🎉🎉</h2>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="d-flex justify-content-center">
-                <img src="{{ asset('img/kanye.png') }}" class="img-fluid" alt="...">
-            </div>
-            <div class="d-flex justify-content-center" style="padding: 30px">
-                <h2 class="card-title">#3 One Direction 🎉</h2>
-            </div>
-          </div>
-      </div>
-    </div>
-    -->
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
