@@ -40,6 +40,14 @@ class Recommender
         $this->user->save();
     }
 
+    public function recommend()
+    {
+        $this->generateUserProfile();
+        $this->generateRecommendation();
+
+        return $this->getRecommendationList();
+    }
+
     public function generateUserProfile()
     {
         // generate user preference vector
@@ -134,6 +142,27 @@ class Recommender
         }
         $this->user->prediction = $predictions;
         $this->user->save();
+    }
+
+    public function getRecommendationList($threshold) {
+        $predictions = $this->user->prediction;
+        $recommendations = [];
+        foreach ($predictions as $prediction) {
+            if( $prediction['probability'] >= $threshold ) {
+                $artist = Artist::find($prediction['artist_id']);
+                array_push($recommendations, [
+                    'artist' => $artist,
+                    'probability' => $prediction['probability']
+                ]);
+            }
+        }
+
+        // sorting recommendation
+        usort($recommendations, function($a, $b) {
+            return $b['probability'] <=> $a['probability'];
+        });
+
+        return $recommendations;
     }
 
     // UTILITY FUNCTION
